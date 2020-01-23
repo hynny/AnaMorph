@@ -5892,7 +5892,17 @@ readFromNeuroMorphoSWCFile(
             swc_nodes[node.parent_id].child_ids.push_back(node.compartment_id);
         }
     }
+    
+     /// Check for root node presence (TODO: Needs improvement and refactoring since we need to allow also non-soma geometries.)
+     if (soma_root_node_ids.size() == 0) {
+        throw("CellNetwork::readFromNeuroMorphoSWCFile(): No root node in SWC file specified. Inconsistent input data, thus exiting now.");
+     }
 
+     /// Check if root node has "correct" compartment type, e.g. 1 (TODO: Needs improvement and refactoring. See above.)
+     if (swc_nodes[soma_root_node_ids.front()].compartment_id != 1)  {
+        throw("CellNetwork::readFromNeuroMorphoSWCFile(): Root node has not soma compartment type id (1). Inconsistent input data, thus existing now.");
+     }
+    
     /* sort all child_id lists. */
     for (auto &node : swc_nodes) {
         node.child_ids.sort();
